@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CodePen - Car Tutorial</title>
+    <style type="text/css">
+        #container {
+          width: 768px;
+          margin: 0 auto;
+          }
+        .main {
+          min-height: 150px;
+          }
+        button {
+          float: left;
+          }
+        img {
+          float: right;
+          width: 200px;
+          margin-right:0;
+          }
+        #engine {
+          height: 150px;
+          width: 150px;
+          border-radius: 75px;
+          font-size: 16px;
+          font-weight: bold;
+          color: rgb(255,0,0);
+          }
+          #go, #brake, #reverse {
+            height: 150px;
+            width: 75px;
+            margin-left: 50px;
+            background-color: #000;
+            color: #fff;
+          }
+
+    </style>
+</head>
+<body>
+    <div id="container">
+      <div class="main">
+        <button id="engine">Start/Stop</button>
+        <button id="go">Accelerate</button>
+        <button id="reverse">Reverse</button>
+        <button id="brake">Brake</button>
+      </div>
+
+    <img src="http://res.freestockphotos.biz/pictures/15/15685-illustration-of-a-red-cartoon-car-pv.png" alt="" />
+</div>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript">
+//  window.onload = function() {
+        //creating the car initially
+        function Car(){
+            this.engine = document.getElementById('engine'); //get the engine btn
+            this.onOff = false; // off
+            this.img = $('img');
+            this.colorChange = function(){
+                //console.log(this.onOff);
+                if(this.onOff){
+                    this.engine.style.color = 'green';
+                }else {
+                    this.engine.style.color = 'red';
+                }
+            };
+            this.go = document.getElementById('go');
+            this.stopCar = document.getElementById('brake');
+            this.position = this.img; //jquery version
+            this.reverse = document.getElementById('reverse');
+
+           // this.img.style.marginRight; //js version
+
+            //if we don't bind this function to the correct object
+            //being 'mycar', then instead, our button is bound
+            //to the toggle function.
+            //we can use Function.prototype.bind to bind the
+            //correct object to our button's event listener
+            //long and short-- we don't want the button
+            //to call the color change, we want our car
+            //to call the color change
+            this.go.addEventListener('click', this.accelerate.bind(this));
+            this.stopCar.addEventListener('click', this.brake.bind(this));
+            this.engine.addEventListener('click', this.toggle.bind(this));
+            this.reverse.addEventListener('click', this.backup.bind(this));
+        }
+        //Car should be able to turn itself on and off
+
+        //Shake the car
+        Car.prototype.shake = function(){
+            this.l = 20; //rename?
+            //if the engine is on
+            if(this.onOff) {
+                //Iterate 10 times
+                for( var i = 0; i < 10; i++ )
+                //Everytime the loop iterates, give the image an animate function
+                this.img.animate( {
+                  //Set margin left to -20px
+                 'margin-left': "+=" + ( this.l = -this.l ) + 'px',
+                  //Set margin right to 20px
+                 'margin-right': "-=" + this.l + 'px'
+                  //Every 50 milliseconds
+                }, 50);
+            }
+        };
+        Car.prototype.currentPosition = function(){
+          return this.position.css('margin-right');
+        };
+
+        Car.prototype.toggle = function(){
+            this.onOff = !this.onOff; //change the value of the onOff
+            this.colorChange();
+            this.shake();
+        };
+
+        Car.prototype.brake = function(){
+            //this.stopCar = document.getElementById('brake');
+            //this.img = $('img');
+            this.img.stop(true,false);
+            //this..addEventListener('click', this.brake);
+        };
+        Car.prototype.accelerate = function(){
+            if(this.engine.style.color === 'green'){
+
+              //we basically need to convert a string to a number
+              //we need our current Position
+              var pos = this.currentPosition(); //return our current position
+              //as a string -- e.g. '10px'
+              pos = parseInt(pos);
+              //run a loop 50 times, and
+              for (var i = 0; i < 50; i++){
+                this.img.animate({
+                 'margin-right': pos += 10
+                }, 50);
+              }
+            } else if(this.engine.style.color !== 'green') {
+              return; //don't do anything
+            };
+        };
+
+        Car.prototype.backup = function() {
+            if(this.engine.style.color === 'green') {
+              var pos1 = this.currentPosition();
+              pos1 = parseInt(pos1);
+              for (var i = 0; i < 50; i++){
+                this.img.animate({
+                  'margin-right': pos1 -= 10
+                }, 50);
+              }
+          } else if(this.engine.style.color !== 'green') {
+            return;
+          };
+        };
+
+
+        var toyota = new Car();
+
+</script>
+</body>
+</html>
